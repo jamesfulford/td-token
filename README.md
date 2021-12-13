@@ -26,28 +26,27 @@ mkcert -cert-file ./cert/cert.crt -key-file ./cert/key.key localhost 127.0.0.1
 
 ```bash
 # Build
-docker build -t tdtoken .
+docker build -f td-token-server.Dockerfile -t td-token-server .
 
 # Run
-
 # kill container if already running (ignore output)
-docker kill tdtoken
+docker kill td-token-server
 . .env  # get CONSUMER_KEY
 # `CONSUMER_KEY`: string of characters you got from developer.tdameritrade.com after creating an app.
 # `-v $PWD/cert:/cert`: passes your self-signed certs to the app
 # `-v $PWD/output:/output`: sets up folder to write token to
-# `-it -p 8000:8000 --name tdtoken --rm`: expose port 8000, clean up container when done, plus other things
+# `-it -p 8000:8000 --name td-token-server --rm`: expose port 8000, clean up container when done, plus other things
 docker run \
  -e CONSUMER_KEY="$CONSUMER_KEY" \
  -v $PWD/cert:/cert \
  -v $PWD/output:/output \
- -it -p 8000:8000 --name tdtoken --rm \
- tdtoken
+ -it -p 8000:8000 --name td-token-server --rm \
+ td-token-server
 ```
 
 ## Login
 
-Visit https://localhost:8000. Click login.
+Visit https://localhost:8000 (http*s* is important). Click login.
 
 Login with your TD brokerage account (_not your developer account on developer.tdameritrade.com_). Make sure you login with the userid of the account you wish to trade with (IRA, Individual, etc.).
 
@@ -64,18 +63,14 @@ The server will write the token to `output/token.json`.
   // Add `Authorization: Bearer {access_token}` header in API calls
   "access_token": "",
   // approximate time access_token expires, epoch timestamp ms
+  // (usually 30 minutes after issuing)
   "expires_at": 1639422978915,
-  // seconds until access_token expires
-  // (usually 30 minutes)
-  "expires_in": 1800,
 
   // used to get a new access_token after the current access_token expires.
   "refresh_token": "",
   // approximate time refresh_token expires, epoch timestamp ms
+  // (usually 90 days after issuing)
   "refresh_token_expires_at": 1647197178915,
-  // seconds until refresh_token expires
-  // (usually 90 days)
-  "refresh_token_expires_in": 7776000,
 
   // permissions your app has available on behalf of its user
   "scope": "PlaceTrades AccountAccess MoveMoney",
@@ -84,3 +79,23 @@ The server will write the token to `output/token.json`.
 ```
 
 # Refresh token
+
+With a token.json file existing at `output/token.json`, run:
+
+```bash
+# Build
+docker build -f td-token-refresh.Dockerfile -t td-token-refresh .
+
+# Run
+# kill container if already running (ignore output)
+docker kill td-token-refresh
+. .env  # get CONSUMER_KEY
+# `CONSUMER_KEY`: string of characters you got from developer.tdameritrade.com after creating an app.
+# `-v $PWD/output:/output`: sets up folder to read token from / write token to
+# `-it --name td-token-refresh --rm`: clean up container when done, plus other things
+docker run \
+ -e CONSUMER_KEY="$CONSUMER_KEY" \
+ -v $PWD/output:/output \
+ -it --name td-token-refresh --rm \
+ td-token-refresh
+```

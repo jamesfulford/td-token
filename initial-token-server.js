@@ -67,12 +67,15 @@ function enrichToken(token) {
         ...token,
         expires_at: Date.now() + token.expires_in * 1000,
         refresh_token_expires_at: Date.now() + token.refresh_token_expires_in * 1000,
+
+        expires_in: undefined,
+        refresh_token_expires_in: undefined,
     };
 }
 
 
 async function storeTokenInLongTermStorage(token) {
-    fs.writeFileSync(tokenOutputPath, JSON.stringify(enrichToken(token)));
+    fs.writeFileSync(tokenOutputPath, JSON.stringify(enrichToken(token), null, 2));
 }
 
 https.createServer(credentials, app).listen(8000);
