@@ -99,3 +99,16 @@ docker run \
  -it --name td-token-refresh --rm \
  td-token-refresh
 ```
+
+Note that this requires no human involvement, so you could put it in a cron job.
+
+It may fail if the refresh_token stored in token.json has expired, which would happen if the refresh script has not been run for over 90 days since the last refresh or initial issuing.
+
+# Usage Patterns
+
+Once you have an initial token by logging into the server, you will not need to login again (barring disaster).
+
+An access token expires after 30m. Either:
+
+- refresh the tokens immediately before a short-running script and have the script read from `token.json`, or
+- refresh the tokens every 20m with a cron job (`*/20 * * * * cd ~/td-token && ./refresh-tokens.sh`) and have any scripts/services read `token.json` immediately before usage and not keep the value in memory.
