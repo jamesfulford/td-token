@@ -13,5 +13,5 @@ docker kill td-token-refresh
 docker run \
  -e CONSUMER_KEY="$CONSUMER_KEY" \
  -v $PWD/output:/output \
- -it --name td-token-refresh --rm \
+ -i --name td-token-refresh --rm \
  td-token-refresh
