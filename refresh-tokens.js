@@ -65,4 +65,4 @@ async function main() {
     fs.writeFileSync(tokenOutputPath, JSON.stringify(token, null, 2));
 }
 
-main();
+main().catch(console.error);
