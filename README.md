@@ -2,7 +2,7 @@
 
 Go to developer.tdameritrade.com. Register. (This developer account is separate from your TD brokerage account.)
 
-Login. Go to My Apps. Create an app. Make sure the redirect urls include `https://localhost:8000`. Copy the Consumer Key. Save it in .env like so:
+Login. Go to My Apps. Create an app. Make sure the redirect urls include `https://localhost:8000`. Set limit to 120 (max). Copy the Consumer Key. Save it in .env like so:
 
 ```bash
 CONSUMER_KEY="put consumer key here"
@@ -15,12 +15,14 @@ echo "CONSUMER_KEY=$CONSUMER_KEY" > .env
 
 TD Ameritrade's login system does not allow redirecting to a non-HTTPS site, which means we need to set up our own SSL certificates. Follow instructions here: https://timonweb.com/django/https-django-development-server-ssl-certificate/
 
-When it comes time to create the cert, run this instead so it goes in the correct directory:
+When it comes time to create the cert (step 1.3), run this instead so it goes in the correct directory:
 
 ```bash
 mkdir -p ./cert
 mkcert -cert-file ./cert/cert.crt -key-file ./cert/key.key localhost 127.0.0.1
 ```
+
+After this, don't have to follow TimOnWeb instructions anymore.
 
 ## Run Server
 
@@ -48,7 +50,7 @@ docker run \
 
 Visit https://localhost:8000 (http*s* is important). Click login.
 
-Login with your TD brokerage account (_not your developer account on developer.tdameritrade.com_). Make sure you login with the userid of the account you wish to trade with (IRA, Individual, etc.).
+Login with your TD brokerage account (_not your developer account on developer.tdameritrade.com_).
 
 When prompted, grant your app access by clicking "Allow".
 
