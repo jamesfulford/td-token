@@ -50,7 +50,7 @@ docker run \
 
 Visit https://localhost:8000 (http*s* is important). Click login.
 
-Login with your TD brokerage account (_not your developer account on developer.tdameritrade.com_).
+Login with your Login with your TD brokerage account (_not your developer account on developer.tdameritrade.com_). Make sure you login with the userid of the account you wish to trade with. If one login has multiple accounts (Individual, Cash/Margin, ROTH Ira, etc.), you can provide the account id later (when making API calls).
 
 When prompted, grant your app access by clicking "Allow".
 
