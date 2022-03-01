@@ -15,5 +15,5 @@ docker run \
     -e CONSUMER_KEY="$CONSUMER_KEY" \
     -v $PWD/cert:/cert \
     -v $PWD/output:/output \
-    -it -p 8000:8000 --name td-token-server --rm \
+    -i -p 8000:8000 --name td-token-server --rm \
     td-token-server
