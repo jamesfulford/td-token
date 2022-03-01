@@ -13,16 +13,19 @@ echo "CONSUMER_KEY=$CONSUMER_KEY" > .env
 
 ## Generate self-signed certificate (once)
 
-TD Ameritrade's login system does not allow redirecting to a non-HTTPS site, which means we need to set up our own SSL certificates. Follow instructions here: https://timonweb.com/django/https-django-development-server-ssl-certificate/
-
-When it comes time to create the cert (step 1.3), run this instead so it goes in the correct directory:
+TD Ameritrade's oauth2 login system does not allow redirecting to a non-HTTPS site, which means we need to set up our own SSL certificates.
 
 ```bash
+# Install
+brew install mkcert
+mkcert -install  # accept our certs locally
+
 mkdir -p ./cert
+# Generate certs
 mkcert -cert-file ./cert/cert.crt -key-file ./cert/key.key localhost 127.0.0.1
 ```
 
-After this, don't have to follow TimOnWeb instructions anymore.
+Original instructions here: https://timonweb.com/django/https-django-development-server-ssl-certificate/
 
 ## Run Server
 
