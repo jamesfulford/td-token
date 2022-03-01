@@ -11,7 +11,7 @@ echo "CONSUMER_KEY=$CONSUMER_KEY" > .env
 
 # Get Initial Token
 
-## Generate self-signed certificate
+## Generate self-signed certificate (once)
 
 TD Ameritrade's login system does not allow redirecting to a non-HTTPS site, which means we need to set up our own SSL certificates. Follow instructions here: https://timonweb.com/django/https-django-development-server-ssl-certificate/
 
@@ -27,28 +27,12 @@ After this, don't have to follow TimOnWeb instructions anymore.
 ## Run Server
 
 ```bash
-# Build
-docker build -f td-token-server.Dockerfile -t td-token-server .
-
-# Run
-# kill container if already running (ignore output)
-docker kill td-token-server
-. .env  # get CONSUMER_KEY
-# `CONSUMER_KEY`: string of characters you got from developer.tdameritrade.com after creating an app.
-# `-v $PWD/cert:/cert`: passes your self-signed certs to the app
-# `-v $PWD/output:/output`: sets up folder to write token to
-# `-it -p 8000:8000 --name td-token-server --rm`: expose port 8000, clean up container when done, plus other things
-docker run \
- -e CONSUMER_KEY="$CONSUMER_KEY" \
- -v $PWD/cert:/cert \
- -v $PWD/output:/output \
- -it -p 8000:8000 --name td-token-server --rm \
- td-token-server
+./start-login.sh > /dev/null 2>&1 &
+python -m webbrowser -n https://localhost:8000
+# (or visit https://localhost:8000 ; use http*s*.)
 ```
 
-## Login
-
-Visit https://localhost:8000 (http*s* is important). Click login.
+Click login.
 
 Login with your Login with your TD brokerage account (_not your developer account on developer.tdameritrade.com_). Make sure you login with the userid of the account you wish to trade with. If one login has multiple accounts (Individual, Cash/Margin, ROTH Ira, etc.), you can provide the account id later (when making API calls).
 
@@ -85,21 +69,7 @@ The server will write the token to `output/token.json`.
 With a token.json file existing at `output/token.json`, run:
 
 ```bash
-# Build
-docker build -f td-token-refresh.Dockerfile -t td-token-refresh .
-
-# Run
-# kill container if already running (ignore output)
-docker kill td-token-refresh
-. .env  # get CONSUMER_KEY
-# `CONSUMER_KEY`: string of characters you got from developer.tdameritrade.com after creating an app.
-# `-v $PWD/output:/output`: sets up folder to read token from / write token to
-# `-it --name td-token-refresh --rm`: clean up container when done, plus other things
-docker run \
- -e CONSUMER_KEY="$CONSUMER_KEY" \
- -v $PWD/output:/output \
- -it --name td-token-refresh --rm \
- td-token-refresh
+./refresh-tokens.sh
 ```
 
 Note that this requires no human involvement, so you could put it in a cron job.
